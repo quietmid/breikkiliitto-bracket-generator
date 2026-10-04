@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament brackets</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body class="tournament-page">
+    <main class="tournament-shell">
+        <header class="tournament-header">
+            <a class="back-link tournament-back-link" href="./bracket.html">Edit categories</a>
+            <div id="tournamentTabs" class="tabs tournament-tabs" role="tablist" aria-label="Tournament categories"></div>
+            <p id="tournamentSummary" class="tournament-summary"></p>
+            <h1 id="tournamentTitle"></h1>
+        </header>
+        <section id="bracketRounds" class="bracket-rounds" aria-label="Tournament bracket">
+            <div id="leftBracket" class="bracket-side bracket-side-left"></div>
+            <div id="finalRound" class="bracket-final">
+                <div id="finalMatch"></div>
+                <label class="third-place-toggle" for="thirdPlaceToggle">
+                    <input id="thirdPlaceToggle" type="checkbox">
+                    <span>Third place match</span>
+                </label>
+                <section id="thirdPlaceRound" class="third-place-round" aria-label="Third place match" hidden>
+                    <h2 class="round-heading">Third place</h2>
+                    <article class="match-card">
+                        <div class="bracket-team-row">
+                            <span id="thirdPlaceTeam0" class="third-place-team-name">TBD</span>
+                            <button id="thirdPlaceChoice0" class="winner-choice" type="button" aria-label="Select third place winner">○</button>
+                        </div>
+                        <div class="bracket-team-row">
+                            <span id="thirdPlaceTeam1" class="third-place-team-name">TBD</span>
+                            <button id="thirdPlaceChoice1" class="winner-choice" type="button" aria-label="Select third place winner">○</button>
+                        </div>
+                    </article>
+                </section>
+            </div>
+            <div id="rightBracket" class="bracket-side bracket-side-right"></div>
+        </section>
+    </main>
+    <script src="./tournament.js"></script>
+</body>
+</html>

@@ -2,21 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bracket</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <h1>Bracket</h1>
-    <p id="result"></p>
+    <main class="container bracket-container">
+        <h1>Bracket categories</h1>
+        <p id="result" class="page-description"></p>
+        <div id="categoryTabs" class="tabs" role="tablist" aria-label="Categories"></div>
+        <div id="categoryPanels" class="tab-panels"></div>
+        <button id="generateBracketButton" type="button" disabled>Generate brackets</button>
+        <a class="back-link" href="./index.html">Change number of categories</a>
+    </main>
 
-    <script>
-        const categoryCount = sessionStorage.getItem('categoryCount');
-        if (!categoryCount) {
-            window.location.href = 'index.html';
-        } else {
-            document.getElementById('result').textContent =
-                `Generating bracket for ${categoryCount} categories`;
-        }
-    </script>
+    <script src="./bracket.js"></script>
 </body>
 </html>
