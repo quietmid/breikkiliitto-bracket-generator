@@ -1,4 +1,7 @@
 # breikkiliitto-bracket-generator
+
+I am the chairperson for Suomen Breikkiliittoo Ry, the Finnish Breaking Association, also an event planner, mostly for breaking competition and I just thought this would had been very helpful for our event. 
+
 A bracket generator for Dance competition
 
 https://quietmid.github.io/breikkiliitto-bracket-generator/
