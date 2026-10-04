@@ -3,7 +3,7 @@ const button = document.getElementById('startButton');
 
 input.addEventListener('input', () => {
     const value = Number(input.value);
-    const isValid = input.value !== "" && Number.isInteger(value) && value > 0;
+    const isValid = input.value !== "" && Number.isInteger(value) && value > 0 && value < 7;
     button.disabled = !isValid;
 });
 
