@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bracket</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Bracket</h1>
+    <p id="result"></p>
+
+    <script>
+        const categoryCount = sessionStorage.getItem('categoryCount');
+        if (!categoryCount) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('result').textContent =
+                `Generating bracket for ${categoryCount} categories`;
+        }
+    </script>
+</body>
+</html>
