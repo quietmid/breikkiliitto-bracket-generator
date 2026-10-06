@@ -20,7 +20,6 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
         const summary = document.getElementById('tournamentSummary');
         const roundsElement = document.getElementById('bracketRounds');
         const leftBracket = document.getElementById('leftBracket');
-        const finalRound = document.getElementById('finalRound');
         const finalMatch = document.getElementById('finalMatch');
         const rightBracket = document.getElementById('rightBracket');
         const thirdPlaceToggle = document.getElementById('thirdPlaceToggle');
@@ -39,6 +38,15 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
         let roundCount = 0;
         let includeThirdPlace = false;
         let thirdPlaceWinnerSide = null;
+
+        const backgroundPhoto = sessionStorage.getItem('tournamentBackgroundPhoto');
+        if (backgroundPhoto) {
+            document.body.classList.add('has-background-photo');
+            document.body.style.setProperty(
+                '--tournament-background-photo',
+                `url(${JSON.stringify(backgroundPhoto)})`
+            );
+        }
 
         function createBracketSlots(size, teamCount) {
             const slots = Array(size).fill(null);

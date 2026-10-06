@@ -13,6 +13,25 @@
         <label for="categories">Number of Categories:</label>
         <input type="number" id="categories" min="1" max="6" step="1" placeholder="1-6">
         <button id="startButton" type="button" disabled>Start &gt;</button>
+        <section class="setup-background" aria-label="Bracket background photo">
+            <h2>Background photo <span>(optional)</span></h2>
+            <div class="setup-background-controls">
+                <label class="setup-photo-button" for="backgroundPhotoFile">
+                    Choose photo
+                    <input
+                        id="backgroundPhotoFile"
+                        class="visually-hidden"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        aria-describedby="backgroundPhotoStatus"
+                    >
+                </label>
+                <button id="removeBackgroundPhotoButton" class="setup-photo-remove" type="button" hidden>
+                    Remove photo
+                </button>
+            </div>
+            <p id="backgroundPhotoStatus" class="setup-background-status" role="status" aria-live="polite"></p>
+        </section>
     </main>
 
     <script src="./script.js"></script>
