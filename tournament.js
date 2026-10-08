@@ -12,6 +12,14 @@ import {
     isValidCategoryCount,
     isValidTeamCount
 } from './BracketRules.js';
+import {
+    createBracketSlots,
+    createWinnerSides,
+    getLoser,
+    getPlayer,
+    getRoundName,
+    selectWinner
+} from './tournamentLogic.js';
 
 const storedCategoryCount = sessionStorage.getItem(CATEGORY_COUNT_STORAGE_KEY);
 
@@ -54,6 +62,7 @@ if (!isValidCategoryCount(storedCategoryCount)) {
         let roundCount = 0;
         let includeThirdPlace = false;
         let thirdPlaceWinnerSide = null;
+        const bracketState = () => ({ slotTeams, teamNames, winnerSides });
 
         const backgroundPhoto = sessionStorage.getItem(BACKGROUND_PHOTO_STORAGE_KEY);
         if (backgroundPhoto) {
@@ -62,54 +71,6 @@ if (!isValidCategoryCount(storedCategoryCount)) {
                 '--tournament-background-photo',
                 `url(${JSON.stringify(backgroundPhoto)})`
             );
-        }
-
-        function createBracketSlots(size, teamCount) {
-            const slots = Array(size).fill(null);
-            const matchCount = size / 2;
-            const byeCount = size - teamCount;
-            const byeMatchOrder = [];
-
-            for (let low = 0, high = matchCount - 1; low <= high; low += 1, high -= 1) {
-                byeMatchOrder.push(low);
-                if (low !== high) {
-                    byeMatchOrder.push(high);
-                }
-            }
-
-            let teamIndex = 0;
-            const byeMatches = new Set(byeMatchOrder.slice(0, byeCount));
-            for (let matchIndex = 0; matchIndex < matchCount; matchIndex += 1) {
-                const firstSlot = matchIndex * 2;
-                slots[firstSlot] = teamIndex;
-                teamIndex += 1;
-                if (!byeMatches.has(matchIndex)) {
-                    slots[firstSlot + 1] = teamIndex;
-                    teamIndex += 1;
-                }
-            }
-
-            return slots;
-        }
-
-        function getPlayer(roundIndex, matchIndex, sideIndex) {
-            if (roundIndex === 0) {
-                const teamIndex = slotTeams[matchIndex * 2 + sideIndex];
-                return teamIndex === null ? null : { teamIndex, name: teamNames[teamIndex] || '' };
-            }
-
-            const previousMatchIndex = matchIndex * 2 + sideIndex;
-            const selectedSide = winnerSides[roundIndex - 1][previousMatchIndex];
-            return selectedSide === null
-                ? null
-                : getPlayer(roundIndex - 1, previousMatchIndex, selectedSide);
-        }
-
-        function getLoser(roundIndex, matchIndex) {
-            const selectedSide = winnerSides[roundIndex][matchIndex];
-            return selectedSide === null
-                ? null
-                : getPlayer(roundIndex, matchIndex, 1 - selectedSide);
         }
 
         function saveWinners() {
@@ -140,8 +101,8 @@ if (!isValidCategoryCount(storedCategoryCount)) {
 
             const semifinalRound = roundCount - 2;
             const semifinalLosers = [
-                getLoser(semifinalRound, 0),
-                getLoser(semifinalRound, 1)
+                getLoser(bracketState(), semifinalRound, 0),
+                getLoser(bracketState(), semifinalRound, 1)
             ];
 
             semifinalLosers.forEach((team, sideIndex) => {
@@ -170,7 +131,11 @@ if (!isValidCategoryCount(storedCategoryCount)) {
                 roundElement.querySelectorAll('.match-card').forEach((matchElement) => {
                     const matchIndex = Number(matchElement.dataset.match);
                     const selectedSide = winnerSides[roundIndex][matchIndex];
-                    const players = [getPlayer(roundIndex, matchIndex, 0), getPlayer(roundIndex, matchIndex, 1)];
+                    const state = bracketState();
+                    const players = [
+                        getPlayer(state, roundIndex, matchIndex, 0),
+                        getPlayer(state, roundIndex, matchIndex, 1)
+                    ];
 
                     matchElement.querySelectorAll('.bracket-team-row').forEach((row, sideIndex) => {
                         const player = players[sideIndex];
@@ -213,19 +178,6 @@ if (!isValidCategoryCount(storedCategoryCount)) {
             updateThirdPlace();
         }
 
-        function roundName(roundIndex) {
-            if (roundIndex === roundCount - 1) {
-                return 'Final';
-            }
-            if (roundCount - roundIndex === 2) {
-                return 'Semi-finals';
-            }
-            if (roundCount - roundIndex === 3) {
-                return 'Quarter-finals';
-            }
-            return `Round ${roundIndex + 1}`;
-        }
-
         function renderBracket(categoryIndex) {
             activeCategoryIndex = categoryIndex;
             const category = categories[categoryIndex];
@@ -249,19 +201,7 @@ if (!isValidCategoryCount(storedCategoryCount)) {
             const savedWinners = JSON.parse(
                 sessionStorage.getItem(categoryWinnersStorageKey(category.number)) || '[]'
             );
-            winnerSides = Array.from({ length: roundCount }, (_, roundIndex) => {
-                const matchesInRound = size / (2 ** (roundIndex + 1));
-                return Array.from({ length: matchesInRound }, (_, matchIndex) => {
-                    const savedSide = savedWinners[roundIndex]?.[matchIndex];
-                    if (roundIndex === 0) {
-                        const firstTeam = slotTeams[matchIndex * 2];
-                        const secondTeam = slotTeams[matchIndex * 2 + 1];
-                        if (firstTeam === null && secondTeam !== null) return 1;
-                        if (secondTeam === null && firstTeam !== null) return 0;
-                    }
-                    return savedSide === 0 || savedSide === 1 ? savedSide : null;
-                });
-            });
+            winnerSides = createWinnerSides(size, slotTeams, savedWinners);
 
             tabButtons.forEach((tab, tabIndex) => {
                 const selected = tabIndex === categoryIndex;
@@ -283,7 +223,7 @@ if (!isValidCategoryCount(storedCategoryCount)) {
                 roundElement.className = 'bracket-round';
                 roundElement.dataset.round = String(roundIndex);
                 roundHeading.className = 'round-heading';
-                roundHeading.textContent = roundName(roundIndex);
+                roundHeading.textContent = getRoundName(roundIndex, roundCount);
                 matchesElement.className = 'round-matches';
                 matchesElement.style.setProperty('--match-span', String(2 ** roundIndex));
                 roundElement.append(roundHeading, matchesElement);
@@ -295,7 +235,7 @@ if (!isValidCategoryCount(storedCategoryCount)) {
 
                     for (let sideIndex = 0; sideIndex < 2; sideIndex += 1) {
                         const row = document.createElement('div');
-                        const player = getPlayer(roundIndex, matchIndex, sideIndex);
+                        const player = getPlayer(bracketState(), roundIndex, matchIndex, sideIndex);
                         const choice = document.createElement('button');
                         const autoAdvanceLabel = document.createElement('span');
 
@@ -337,12 +277,7 @@ if (!isValidCategoryCount(storedCategoryCount)) {
                         choice.className = 'winner-choice';
                         choice.addEventListener('click', () => {
                             if (choice.disabled) return;
-                            winnerSides[roundIndex][matchIndex] = sideIndex;
-                            let affectedMatchIndex = matchIndex;
-                            for (let laterRound = roundIndex + 1; laterRound < roundCount; laterRound += 1) {
-                                affectedMatchIndex = Math.floor(affectedMatchIndex / 2);
-                                winnerSides[laterRound][affectedMatchIndex] = null;
-                            }
+                            winnerSides = selectWinner(winnerSides, roundIndex, matchIndex, sideIndex);
                             if (roundIndex <= roundCount - 2) {
                                 thirdPlaceWinnerSide = null;
                                 saveThirdPlace();
