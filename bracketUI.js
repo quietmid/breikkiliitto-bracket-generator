@@ -1,68 +1,69 @@
-const categoryCount = Number(sessionStorage.getItem('categoryCount'));
+import {
+    categoryNameStorageKey,
+    categoryTeamCountStorageKey,
+    categoryWinnersStorageKey,
+    CATEGORY_COUNT_STORAGE_KEY,
+    getCategoryLabel,
+    getNextTabIndex,
+    isValidCategoryCount,
+    isValidTeamCount,
+    MAX_CATEGORY_NAME_LENGTH,
+    MAX_TEAM_COUNT,
+    MIN_TEAM_COUNT
+} from './BracketRules.js';
 
-if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) {
+const categoryCount = sessionStorage.getItem(CATEGORY_COUNT_STORAGE_KEY);
+
+if (!isValidCategoryCount(categoryCount)) {
     window.location.replace('./index.html');
 } else {
-    const tabs = document.getElementById('categoryTabs');
+    const tabList = document.getElementById('categoryTabs');
     const panels = document.getElementById('categoryPanels');
     const result = document.getElementById('result');
     const generateButton = document.getElementById('generateBracketButton');
-    const tabButtons = [];
+    const tabs = [];
     const teamCountInputs = [];
+    const count = Number(categoryCount);
 
-    result.textContent = `Name each category and enter its number of teams (2–64).`;
+    result.textContent = `Name each category and enter its number of teams (${MIN_TEAM_COUNT}–${MAX_TEAM_COUNT}).`;
 
     function updateGenerateButton() {
-        generateButton.disabled = teamCountInputs.some((teamCountInput) => {
-            const count = Number(teamCountInput.value);
-            return teamCountInput.value === '' || !Number.isInteger(count) || count < 2 || count > 64;
+        generateButton.disabled = !teamCountInputs.every((input) => isValidTeamCount(input.value));
+    }
+
+    function activateTab(activeIndex) {
+        tabs.forEach((tab, index) => {
+            const isActive = index === activeIndex;
+            tab.setAttribute('aria-selected', String(isActive));
+            tab.tabIndex = isActive ? 0 : -1;
+            panels.children[index].hidden = !isActive;
         });
     }
 
-    function activateTab(index) {
-        tabButtons.forEach((tab, tabIndex) => {
-            const selected = tabIndex === index;
-            tab.setAttribute('aria-selected', String(selected));
-            tab.tabIndex = selected ? 0 : -1;
-            panels.children[tabIndex].hidden = !selected;
-        });
-    }
-
-    for (let index = 0; index < categoryCount; index += 1) {
-        const number = index + 1;
+    function createCategory(number, index) {
         const tab = document.createElement('button');
         const panel = document.createElement('section');
         const nameLabel = document.createElement('label');
         const nameInput = document.createElement('input');
         const countLabel = document.createElement('label');
         const countInput = document.createElement('input');
-        const storedName = sessionStorage.getItem(`categoryName-${number}`) || '';
-        const storedTeamCount = sessionStorage.getItem(`categoryTeamCount-${number}`) || '';
+        const storedName = sessionStorage.getItem(categoryNameStorageKey(number)) || '';
 
         tab.type = 'button';
         tab.id = `category-tab-${number}`;
         tab.setAttribute('role', 'tab');
         tab.setAttribute('aria-controls', `category-panel-${number}`);
-        tab.textContent = storedName || `Category ${number}`;
+        tab.textContent = getCategoryLabel(storedName, number);
         tab.addEventListener('click', () => activateTab(index));
         tab.addEventListener('keydown', (event) => {
-            let nextIndex;
-
-            if (event.key === 'ArrowRight') {
-                nextIndex = (index + 1) % categoryCount;
-            } else if (event.key === 'ArrowLeft') {
-                nextIndex = (index - 1 + categoryCount) % categoryCount;
-            } else if (event.key === 'Home') {
-                nextIndex = 0;
-            } else if (event.key === 'End') {
-                nextIndex = categoryCount - 1;
-            } else {
+            const nextIndex = getNextTabIndex(index, event.key, count);
+            if (nextIndex === null) {
                 return;
             }
 
             event.preventDefault();
             activateTab(nextIndex);
-            tabButtons[nextIndex].focus();
+            tabs[nextIndex].focus();
         });
 
         panel.id = `category-panel-${number}`;
@@ -76,38 +77,41 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
 
         nameInput.id = `category-name-${number}`;
         nameInput.type = 'text';
-        nameInput.maxLength = 60;
+        nameInput.maxLength = MAX_CATEGORY_NAME_LENGTH;
         nameInput.placeholder = `Enter category ${number} name`;
         nameInput.value = storedName;
         nameInput.autocomplete = 'off';
         nameInput.addEventListener('input', () => {
-            const name = nameInput.value.trim();
-            tab.textContent = name || `Category ${number}`;
-            sessionStorage.setItem(`categoryName-${number}`, nameInput.value);
+            tab.textContent = getCategoryLabel(nameInput.value, number);
+            sessionStorage.setItem(categoryNameStorageKey(number), nameInput.value);
         });
 
         countLabel.htmlFor = `category-team-count-${number}`;
         countLabel.className = 'team-count-label';
-        countLabel.textContent = 'Number of teams (2–64)';
+        countLabel.textContent = `Number of teams (${MIN_TEAM_COUNT}–${MAX_TEAM_COUNT})`;
 
         countInput.id = `category-team-count-${number}`;
         countInput.type = 'number';
-        countInput.min = '2';
-        countInput.max = '64';
+        countInput.min = String(MIN_TEAM_COUNT);
+        countInput.max = String(MAX_TEAM_COUNT);
         countInput.step = '1';
         countInput.placeholder = 'e.g. 8';
-        countInput.value = storedTeamCount;
+        countInput.value = sessionStorage.getItem(categoryTeamCountStorageKey(number)) || '';
         countInput.addEventListener('input', () => {
-            sessionStorage.setItem(`categoryTeamCount-${number}`, countInput.value);
-            sessionStorage.removeItem(`categoryWinners-${number}`);
+            sessionStorage.setItem(categoryTeamCountStorageKey(number), countInput.value);
+            sessionStorage.removeItem(categoryWinnersStorageKey(number));
             updateGenerateButton();
         });
 
         panel.append(nameLabel, nameInput, countLabel, countInput);
-        tabs.append(tab);
+        tabList.append(tab);
         panels.append(panel);
-        tabButtons.push(tab);
+        tabs.push(tab);
         teamCountInputs.push(countInput);
+    }
+
+    for (let index = 0; index < count; index += 1) {
+        createCategory(index + 1, index);
     }
 
     activateTab(0);

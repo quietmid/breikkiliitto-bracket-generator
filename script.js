@@ -1,14 +1,7 @@
-export const CATEGORY_STORAGE_KEY = 'categoryCount';
-export const BACKGROUND_PHOTO_STORAGE_KEY = 'tournamentBackgroundPhoto';
+import { isValidCategoryCount } from './BracketRules.js';
 
-const MAX_CATEGORY_COUNT = 6;
 const MAX_BACKGROUND_PHOTO_SIZE = 24_000_000;
 const ALLOWED_BACKGROUND_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-
-export function isValidCategoryCount(value) {
-    const count = Number(value);
-    return value !== '' && Number.isInteger(count) && count > 0 && count <= MAX_CATEGORY_COUNT;
-}
 
 export function isStartButtonDisabled(categoryCount, isPhotoProcessing) {
     return !isValidCategoryCount(categoryCount) || isPhotoProcessing;

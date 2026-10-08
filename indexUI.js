@@ -1,11 +1,15 @@
 import {
-    BACKGROUND_PHOTO_STORAGE_KEY,
-    CATEGORY_STORAGE_KEY,
     getBackgroundPhotoValidationMessage,
     getInitialPhotoStatus,
     getPhotoProcessingErrorMessage,
     isStartButtonDisabled
 } from './script.js';
+import {
+    BACKGROUND_PHOTO_STORAGE_KEY,
+    CATEGORY_COUNT_STORAGE_KEY,
+    MAX_CATEGORY_COUNT,
+    MIN_CATEGORY_COUNT
+} from './BracketRules.js';
 
 const input = document.getElementById('categories');
 const button = document.getElementById('startButton');
@@ -13,6 +17,11 @@ const backgroundPhotoFile = document.getElementById('backgroundPhotoFile');
 const removeBackgroundPhotoButton = document.getElementById('removeBackgroundPhotoButton');
 const backgroundPhotoStatus = document.getElementById('backgroundPhotoStatus');
 let isPhotoProcessing = false;
+
+input.min = String(MIN_CATEGORY_COUNT);
+input.max = String(MAX_CATEGORY_COUNT);
+input.step = '1';
+input.placeholder = `${MIN_CATEGORY_COUNT}-${MAX_CATEGORY_COUNT}`;
 
 function updateStartButton() {
     button.disabled = isStartButtonDisabled(input.value, isPhotoProcessing);
@@ -96,6 +105,6 @@ button.addEventListener('click', () => {
     if (button.disabled) {
         return;
     }
-    sessionStorage.setItem(CATEGORY_STORAGE_KEY, input.value);
+    sessionStorage.setItem(CATEGORY_COUNT_STORAGE_KEY, input.value);
     window.location.href = 'bracket.html';
 });
