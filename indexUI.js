@@ -9,7 +9,7 @@ import {
     CATEGORY_COUNT_STORAGE_KEY,
     MAX_CATEGORY_COUNT,
     MIN_CATEGORY_COUNT
-} from './BracketRules.js';
+} from './bracketRules.js';
 
 const input = document.getElementById('categories');
 const button = document.getElementById('startButton');

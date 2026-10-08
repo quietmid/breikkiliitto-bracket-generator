@@ -11,7 +11,7 @@ import {
     getNextTabIndex,
     isValidCategoryCount,
     isValidTeamCount
-} from './BracketRules.js';
+} from './bracketRules.js';
 import {
     createBracketSlots,
     createWinnerSides,

@@ -10,7 +10,7 @@ import {
     MAX_CATEGORY_NAME_LENGTH,
     MAX_TEAM_COUNT,
     MIN_TEAM_COUNT
-} from './BracketRules.js';
+} from './bracketRules.js';
 
 const categoryCount = sessionStorage.getItem(CATEGORY_COUNT_STORAGE_KEY);
 
