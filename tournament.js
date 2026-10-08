@@ -1,18 +1,34 @@
-const categoryCount = Number(sessionStorage.getItem('categoryCount'));
+import {
+    BACKGROUND_PHOTO_STORAGE_KEY,
+    CATEGORY_COUNT_STORAGE_KEY,
+    categoryNameStorageKey,
+    categoryTeamCountStorageKey,
+    categoryTeamsStorageKey,
+    categoryThirdPlaceStorageKey,
+    categoryThirdPlaceWinnerStorageKey,
+    categoryWinnersStorageKey,
+    getCategoryLabel,
+    getNextTabIndex,
+    isValidCategoryCount,
+    isValidTeamCount
+} from './BracketRules.js';
 
-if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) {
+const storedCategoryCount = sessionStorage.getItem(CATEGORY_COUNT_STORAGE_KEY);
+
+if (!isValidCategoryCount(storedCategoryCount)) {
     window.location.replace('./index.html');
 } else {
+    const categoryCount = Number(storedCategoryCount);
     const categories = Array.from({ length: categoryCount }, (_, index) => {
         const number = index + 1;
         return {
             number,
-            name: sessionStorage.getItem(`categoryName-${number}`)?.trim() || `Category ${number}`,
-            teamCount: Number(sessionStorage.getItem(`categoryTeamCount-${number}`))
+            name: getCategoryLabel(sessionStorage.getItem(categoryNameStorageKey(number)) || '', number),
+            teamCount: Number(sessionStorage.getItem(categoryTeamCountStorageKey(number)))
         };
     });
 
-    if (categories.some(({ teamCount }) => !Number.isInteger(teamCount) || teamCount < 2 || teamCount > 64)) {
+    if (categories.some(({ teamCount }) => !isValidTeamCount(teamCount))) {
         window.location.replace('./bracket.html');
     } else {
         const tabs = document.getElementById('tournamentTabs');
@@ -39,7 +55,7 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
         let includeThirdPlace = false;
         let thirdPlaceWinnerSide = null;
 
-        const backgroundPhoto = sessionStorage.getItem('tournamentBackgroundPhoto');
+        const backgroundPhoto = sessionStorage.getItem(BACKGROUND_PHOTO_STORAGE_KEY);
         if (backgroundPhoto) {
             document.body.classList.add('has-background-photo');
             document.body.style.setProperty(
@@ -98,16 +114,16 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
 
         function saveWinners() {
             sessionStorage.setItem(
-                `categoryWinners-${categories[activeCategoryIndex].number}`,
+                categoryWinnersStorageKey(categories[activeCategoryIndex].number),
                 JSON.stringify(winnerSides)
             );
         }
 
         function saveThirdPlace() {
             const categoryNumber = categories[activeCategoryIndex].number;
-            sessionStorage.setItem(`categoryThirdPlace-${categoryNumber}`, String(includeThirdPlace));
+            sessionStorage.setItem(categoryThirdPlaceStorageKey(categoryNumber), String(includeThirdPlace));
             sessionStorage.setItem(
-                `categoryThirdPlaceWinner-${categoryNumber}`,
+                categoryThirdPlaceWinnerStorageKey(categoryNumber),
                 thirdPlaceWinnerSide === null ? '' : String(thirdPlaceWinnerSide)
             );
         }
@@ -216,13 +232,13 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
             const size = 2 ** Math.ceil(Math.log2(category.teamCount));
             roundCount = Math.log2(size);
             const storedNames = JSON.parse(
-                sessionStorage.getItem(`categoryTeams-${category.number}`) || '[]'
+                sessionStorage.getItem(categoryTeamsStorageKey(category.number)) || '[]'
             );
             teamNames = Array.from({ length: category.teamCount }, (_, index) => storedNames[index] || '');
             includeThirdPlace = category.teamCount >= 4 &&
-                sessionStorage.getItem(`categoryThirdPlace-${category.number}`) === 'true';
+                sessionStorage.getItem(categoryThirdPlaceStorageKey(category.number)) === 'true';
             const savedThirdPlaceWinner = sessionStorage.getItem(
-                `categoryThirdPlaceWinner-${category.number}`
+                categoryThirdPlaceWinnerStorageKey(category.number)
             );
             thirdPlaceWinnerSide = savedThirdPlaceWinner === '0' || savedThirdPlaceWinner === '1'
                 ? Number(savedThirdPlaceWinner)
@@ -231,7 +247,7 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
             slotTeams = createBracketSlots(size, category.teamCount);
 
             const savedWinners = JSON.parse(
-                sessionStorage.getItem(`categoryWinners-${category.number}`) || '[]'
+                sessionStorage.getItem(categoryWinnersStorageKey(category.number)) || '[]'
             );
             winnerSides = Array.from({ length: roundCount }, (_, roundIndex) => {
                 const matchesInRound = size / (2 ** (roundIndex + 1));
@@ -299,7 +315,7 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
                             input.addEventListener('input', () => {
                                 teamNames[player.teamIndex] = input.value;
                                 sessionStorage.setItem(
-                                    `categoryTeams-${category.number}`,
+                                    categoryTeamsStorageKey(category.number),
                                     JSON.stringify(teamNames)
                                 );
                                 saveWinners();
@@ -391,16 +407,8 @@ if (!Number.isInteger(categoryCount) || categoryCount < 1 || categoryCount > 6) 
             tab.textContent = category.name;
             tab.addEventListener('click', () => renderBracket(index));
             tab.addEventListener('keydown', (event) => {
-                let nextIndex;
-                if (event.key === 'ArrowRight') {
-                    nextIndex = (index + 1) % categoryCount;
-                } else if (event.key === 'ArrowLeft') {
-                    nextIndex = (index - 1 + categoryCount) % categoryCount;
-                } else if (event.key === 'Home') {
-                    nextIndex = 0;
-                } else if (event.key === 'End') {
-                    nextIndex = categoryCount - 1;
-                } else {
+                const nextIndex = getNextTabIndex(index, event.key, categoryCount);
+                if (nextIndex === null) {
                     return;
                 }
                 event.preventDefault();
