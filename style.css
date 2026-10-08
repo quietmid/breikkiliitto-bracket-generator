@@ -458,6 +458,7 @@ button:disabled {
     color: var(--muted);
     font-size: 0.84rem;
     text-overflow: ellipsis;
+    transition: color 0.18s ease;
     white-space: nowrap;
 }
 
@@ -560,6 +561,11 @@ button:disabled {
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.06em;
+    transition: color 0.18s ease;
+}
+
+.bracket-team-row.is-winner .bye-label {
+    color: var(--accent-dark);
 }
 
 .auto-advance-label {

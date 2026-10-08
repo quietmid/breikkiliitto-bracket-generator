@@ -43,6 +43,7 @@ test('creates and completes a one-category, eight-team tournament without a phot
         '.bracket-round[data-round="2"] .match-card[data-match="0"] .bracket-team-row.is-winner'
     );
     await expect(championRow).toContainText('Team 1');
+    await expect(championRow.locator('.bye-label')).toHaveCSS('color', 'rgb(94, 63, 192)');
     await expect(page.locator('body')).not.toHaveClass(/has-background-photo/);
 
     await page.reload();
@@ -51,4 +52,7 @@ test('creates and completes a one-category, eight-team tournament without a phot
     await expect(
         page.locator('.bracket-round[data-round="2"] .match-card[data-match="0"] .bracket-team-row.is-winner')
     ).toContainText('Team 1');
+    await expect(
+        page.locator('.bracket-round[data-round="2"] .match-card[data-match="0"] .bracket-team-row.is-winner .bye-label')
+    ).toHaveCSS('color', 'rgb(94, 63, 192)');
 });
