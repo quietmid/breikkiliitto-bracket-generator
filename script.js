@@ -1,4 +1,4 @@
-import { isValidCategoryCount } from './BracketRules.js';
+import { isValidCategoryCount } from './bracketRules.js';
 
 const MAX_BACKGROUND_PHOTO_SIZE = 24_000_000;
 const ALLOWED_BACKGROUND_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
