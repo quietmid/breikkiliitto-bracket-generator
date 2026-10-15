@@ -9,7 +9,19 @@
 <body class="tournament-page">
     <main class="tournament-shell">
         <header class="tournament-header">
-            <a class="back-link tournament-back-link" href="./bracket.html">Edit categories</a>
+            <div class="tournament-toolbar">
+                <a class="back-link tournament-back-link" href="./bracket.html">Edit categories</a>
+                <div class="theme-control">
+                    <label for="themeSelector">Color theme</label>
+                    <select id="themeSelector">
+                        <option value="light">Light mode</option>
+                        <option value="dark">Dark mode</option>
+                        <option value="blue-mint">Blue and mint</option>
+                        <option value="red-black">Red and black</option>
+                        <option value="blue-shades">Blue shades and white</option>
+                    </select>
+                </div>
+            </div>
             <div id="tournamentTabs" class="tabs tournament-tabs" role="tablist" aria-label="Tournament categories"></div>
             <p id="tournamentSummary" class="tournament-summary"></p>
             <h1 id="tournamentTitle"></h1>
@@ -18,10 +30,6 @@
             <div id="leftBracket" class="bracket-side bracket-side-left"></div>
             <div id="finalRound" class="bracket-final">
                 <div id="finalMatch"></div>
-                <label class="third-place-toggle" for="thirdPlaceToggle">
-                    <input id="thirdPlaceToggle" type="checkbox">
-                    <span>Third place match</span>
-                </label>
                 <section id="thirdPlaceRound" class="third-place-round" aria-label="Third place match" hidden>
                     <h2 class="round-heading">Third place</h2>
                     <article class="match-card">
@@ -35,10 +43,15 @@
                         </div>
                     </article>
                 </section>
+                <label class="third-place-toggle" for="thirdPlaceToggle">
+                    <input id="thirdPlaceToggle" type="checkbox">
+                    <span>Third place match</span>
+                </label>
             </div>
             <div id="rightBracket" class="bracket-side bracket-side-right"></div>
         </section>
     </main>
+    <script type="module" src="./theme.js"></script>
     <script type="module" src="./tournament.js"></script>
 </body>
 </html>
