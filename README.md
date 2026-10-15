@@ -11,7 +11,7 @@ Enter a category count from 1 to 6 and select **Start**. There is also an option
 
 
 More feature to come through, just maybe :P 
-- Generate the bracket with seeded or random or manaual
-- color options for theme or just color for the texts
+- Generate the bracket with seeded or random or manual
+- color options for theme or just color for the texts :white_check_mark: 15.10.2026 
 - maybe photo url in the future
-- need to add tests and CI workflows later
+- need to add tests and CI workflows later :white_check_mark: 15.10.2026 
