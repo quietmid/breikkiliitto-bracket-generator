@@ -8,6 +8,16 @@
 </head>
 <body>
     <main class="container">
+        <div class="theme-control">
+            <label for="themeSelector">Color theme</label>
+            <select id="themeSelector">
+                <option value="light">Light mode</option>
+                <option value="dark">Dark mode</option>
+                <option value="blue-mint">Blue and mint</option>
+                <option value="red-black">Red and black</option>
+                <option value="blue-shades">Blue shades and white</option>
+            </select>
+        </div>
         <h1>Bracket Generator</h1>
 
         <label for="categories">Number of Categories:</label>
@@ -34,6 +44,7 @@
         </section>
     </main>
 
+    <script type="module" src="./theme.js"></script>
     <script type="module" src="./indexUI.js"></script>
 </body>
 </html>

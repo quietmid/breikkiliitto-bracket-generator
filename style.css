@@ -9,8 +9,138 @@
     --accent-soft: #f0ebfc;
     --surface: #fff;
     --page: #f6f4f9;
+    --field: #fcfbfd;
     --border: #e8e4ee;
+    --disabled: #c9c4d2;
+    --disabled-surface: #eeebf2;
+    --disabled-ink: #8f8998;
+    --subtle: #938d9b;
+    --glow-one: rgba(217, 202, 255, 0.38);
+    --glow-two: rgba(255, 218, 230, 0.3);
+    --container-border: rgba(255, 255, 255, 0.9);
+    --header-surface: rgba(255, 255, 255, 0.94);
+    --header-photo-surface: rgba(255, 255, 255, 0.88);
+    --card-photo-surface: rgba(255, 255, 255, 0.91);
+    --photo-overlay: rgba(246, 244, 249, 0.42);
+    --focus-ring: rgba(117, 83, 214, 0.45);
+    --input-focus-shadow: rgba(117, 83, 214, 0.13);
+    --button-hover-shadow: rgba(94, 63, 192, 0.22);
+    --card-shadow: 0 8px 24px rgba(44, 31, 75, 0.06);
     --shadow: 0 20px 60px rgba(44, 31, 75, 0.1);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --ink: #f4f2f8;
+    --muted: #b2adbd;
+    --accent: #7553d6;
+    --accent-dark: #c4b5fd;
+    --accent-soft: #30264a;
+    --surface: #22212a;
+    --page: #17161d;
+    --field: #2b2933;
+    --border: #403d49;
+    --disabled: #403d49;
+    --disabled-surface: #35323d;
+    --disabled-ink: #a49eae;
+    --subtle: #a49eae;
+    --glow-one: rgba(117, 83, 214, 0.14);
+    --glow-two: rgba(66, 46, 108, 0.12);
+    --container-border: rgba(255, 255, 255, 0.08);
+    --header-surface: rgba(34, 33, 42, 0.96);
+    --header-photo-surface: rgba(34, 33, 42, 0.9);
+    --card-photo-surface: rgba(34, 33, 42, 0.94);
+    --photo-overlay: rgba(23, 22, 29, 0.42);
+    --focus-ring: rgba(167, 139, 250, 0.7);
+    --input-focus-shadow: rgba(167, 139, 250, 0.2);
+    --button-hover-shadow: rgba(117, 83, 214, 0.28);
+    --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+}
+
+:root[data-theme="blue-mint"] {
+    --ink: #17324d;
+    --muted: #557080;
+    --accent: #168aad;
+    --accent-dark: #116b88;
+    --accent-soft: #d8f3ed;
+    --surface: #fff;
+    --page: #effaf7;
+    --field: #f5fcfa;
+    --border: #cce7df;
+    --disabled: #c5d8d3;
+    --disabled-surface: #e4eeeb;
+    --disabled-ink: #617a73;
+    --subtle: #718b86;
+    --glow-one: rgba(90, 200, 180, 0.2);
+    --glow-two: rgba(106, 178, 230, 0.18);
+    --container-border: rgba(255, 255, 255, 0.9);
+    --header-surface: rgba(255, 255, 255, 0.94);
+    --header-photo-surface: rgba(255, 255, 255, 0.88);
+    --card-photo-surface: rgba(255, 255, 255, 0.92);
+    --photo-overlay: rgba(239, 250, 247, 0.42);
+    --focus-ring: rgba(22, 138, 173, 0.55);
+    --input-focus-shadow: rgba(22, 138, 173, 0.17);
+    --button-hover-shadow: rgba(17, 107, 136, 0.22);
+    --card-shadow: 0 8px 24px rgba(23, 70, 80, 0.08);
+    --shadow: 0 20px 60px rgba(23, 70, 80, 0.1);
+}
+
+:root[data-theme="red-black"] {
+    color-scheme: dark;
+    --ink: #f5f5f5;
+    --muted: #b7b7b7;
+    --accent: #d52e3b;
+    --accent-dark: #ff5964;
+    --accent-soft: #402126;
+    --surface: #242424;
+    --page: #171717;
+    --field: #2e2e2e;
+    --border: #444;
+    --disabled: #4b3b3d;
+    --disabled-surface: #393939;
+    --disabled-ink: #aaa;
+    --subtle: #aaa;
+    --glow-one: rgba(230, 57, 70, 0.12);
+    --glow-two: rgba(100, 20, 28, 0.1);
+    --container-border: rgba(255, 255, 255, 0.08);
+    --header-surface: rgba(36, 36, 36, 0.96);
+    --header-photo-surface: rgba(36, 36, 36, 0.9);
+    --card-photo-surface: rgba(36, 36, 36, 0.94);
+    --photo-overlay: rgba(23, 23, 23, 0.42);
+    --focus-ring: rgba(255, 89, 100, 0.7);
+    --input-focus-shadow: rgba(255, 89, 100, 0.2);
+    --button-hover-shadow: rgba(213, 46, 59, 0.25);
+    --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.32);
+}
+
+:root[data-theme="blue-shades"] {
+    --ink: #142b4a;
+    --muted: #5e718b;
+    --accent: #2864c5;
+    --accent-dark: #1d4f9e;
+    --accent-soft: #e1ecff;
+    --surface: #fff;
+    --page: #f1f6ff;
+    --field: #f8faff;
+    --border: #d5e1f3;
+    --disabled: #c8d3e3;
+    --disabled-surface: #e8edf5;
+    --disabled-ink: #65748a;
+    --subtle: #7e8ba0;
+    --glow-one: rgba(102, 153, 235, 0.2);
+    --glow-two: rgba(180, 210, 255, 0.24);
+    --container-border: rgba(255, 255, 255, 0.9);
+    --header-surface: rgba(255, 255, 255, 0.96);
+    --header-photo-surface: rgba(255, 255, 255, 0.9);
+    --card-photo-surface: rgba(255, 255, 255, 0.93);
+    --photo-overlay: rgba(241, 246, 255, 0.42);
+    --focus-ring: rgba(40, 100, 197, 0.55);
+    --input-focus-shadow: rgba(40, 100, 197, 0.17);
+    --button-hover-shadow: rgba(29, 79, 158, 0.22);
+    --card-shadow: 0 8px 24px rgba(29, 63, 112, 0.08);
+    --shadow: 0 20px 60px rgba(29, 63, 112, 0.1);
 }
 
 * {
@@ -25,8 +155,8 @@ body {
     align-items: center;
     justify-content: center;
     background:
-        radial-gradient(ellipse at 15% 10%, rgba(217, 202, 255, 0.38), transparent 36%),
-        radial-gradient(ellipse at 90% 90%, rgba(255, 218, 230, 0.3), transparent 34%),
+        radial-gradient(ellipse at 15% 10%, var(--glow-one), transparent 36%),
+        radial-gradient(ellipse at 90% 90%, var(--glow-two), transparent 34%),
         var(--page);
     color: var(--ink);
     font-family: 'DM Sans', 'Segoe UI', sans-serif;
@@ -36,7 +166,7 @@ body {
 .container {
     width: min(100%, 620px);
     padding: clamp(28px, 6vw, 56px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--container-border);
     border-radius: 24px;
     background: var(--surface);
     box-shadow: var(--shadow);
@@ -78,7 +208,7 @@ input {
     padding: 12px 16px;
     border: 1px solid var(--border);
     border-radius: 12px;
-    background: #fcfbfd;
+    background: var(--field);
     color: var(--ink);
     font: inherit;
     font-size: 1rem;
@@ -87,14 +217,14 @@ input {
 }
 
 input::placeholder {
-    color: #aaa5b1;
+    color: var(--subtle);
 }
 
 input:focus {
     border-color: var(--accent);
     outline: none;
     background: var(--surface);
-    box-shadow: 0 0 0 4px rgba(117, 83, 214, 0.13);
+    box-shadow: 0 0 0 4px var(--input-focus-shadow);
 }
 
 #categories {
@@ -125,17 +255,17 @@ button {
 button:hover:not(:disabled) {
     transform: translateY(-1px);
     background: var(--accent-dark);
-    box-shadow: 0 8px 18px rgba(94, 63, 192, 0.22);
+    box-shadow: 0 8px 18px var(--button-hover-shadow);
 }
 
 button:focus-visible,
 a:focus-visible {
-    outline: 3px solid rgba(117, 83, 214, 0.45);
+    outline: 3px solid var(--focus-ring);
     outline-offset: 3px;
 }
 
 button:disabled {
-    background: #c9c4d2;
+    background: var(--disabled);
     cursor: not-allowed;
 }
 
@@ -184,7 +314,7 @@ button:disabled {
     padding: clamp(20px, 5vw, 36px);
     border: 1px solid var(--border);
     border-radius: 16px;
-    background: #fcfbfd;
+    background: var(--field);
 }
 
 .tab-panel[hidden] {
@@ -221,6 +351,43 @@ button:disabled {
     text-underline-offset: 4px;
 }
 
+.theme-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+
+.theme-control label {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.theme-control select {
+    min-height: 38px;
+    max-width: 100%;
+    padding: 7px 32px 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--field);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.82rem;
+}
+
+.theme-control select:focus-visible {
+    border-color: var(--accent);
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+
+.container > .theme-control {
+    justify-content: flex-end;
+    margin: 0 0 20px;
+}
+
 .visually-hidden {
     position: absolute;
     width: 1px;
@@ -249,7 +416,16 @@ button:disabled {
 .tournament-header {
     padding: 20px clamp(16px, 4vw, 48px) 24px;
     border-bottom: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.94);
+    background: var(--header-surface);
+}
+
+.tournament-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
 .tournament-header h1 {
@@ -259,7 +435,7 @@ button:disabled {
 }
 
 .tournament-back-link {
-    margin: 0 0 16px;
+    margin: 0;
 }
 
 .tournament-tabs {
@@ -277,7 +453,7 @@ button:disabled {
     padding: 20px;
     border: 1px solid var(--border);
     border-radius: 16px;
-    background: #fcfbfd;
+    background: var(--field);
 }
 
 .setup-background h2 {
@@ -321,7 +497,7 @@ button:disabled {
 }
 
 .setup-photo-button:focus-within {
-    outline: 3px solid rgba(117, 83, 214, 0.45);
+    outline: 3px solid var(--focus-ring);
     outline-offset: 3px;
 }
 
@@ -349,7 +525,7 @@ button:disabled {
 
 .tournament-page.has-background-photo {
     background-image:
-        linear-gradient(rgba(246, 244, 249, 0.42), rgba(246, 244, 249, 0.42)),
+        linear-gradient(var(--photo-overlay), var(--photo-overlay)),
         var(--tournament-background-photo);
     background-attachment: fixed;
     background-position: center;
@@ -357,11 +533,11 @@ button:disabled {
 }
 
 .has-background-photo .tournament-header {
-    background: rgba(255, 255, 255, 0.88);
+    background: var(--header-photo-surface);
 }
 
 .has-background-photo .match-card {
-    background: rgba(255, 255, 255, 0.91);
+    background: var(--card-photo-surface);
     backdrop-filter: blur(6px);
 }
 
@@ -401,6 +577,7 @@ button:disabled {
     align-items: center;
     justify-content: center;
     gap: 18px;
+    transform: translateY(48px);
 }
 
 #finalMatch {
@@ -416,10 +593,11 @@ button:disabled {
     align-items: center;
     gap: 8px;
     margin: 0;
-    color: #938d9b;
+    color: var(--subtle);
     font-size: 0.78rem;
     font-weight: 500;
     cursor: pointer;
+    opacity: 0.78;
 }
 
 .third-place-toggle input {
@@ -484,8 +662,16 @@ button:disabled {
 }
 
 .round-heading {
+    width: fit-content;
     margin: 0 0 20px;
-    color: var(--muted);
+    margin-right: auto;
+    margin-left: auto;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -506,7 +692,7 @@ button:disabled {
     border: 1px solid var(--border);
     border-radius: 14px;
     background: var(--surface);
-    box-shadow: 0 8px 24px rgba(44, 31, 75, 0.06);
+    box-shadow: var(--card-shadow);
 }
 
 .bracket-team-row {
@@ -546,18 +732,18 @@ button:disabled {
 }
 
 .winner-choice:disabled {
-    background: #eeebf2;
-    color: #8f8998;
+    background: var(--disabled-surface);
+    color: var(--disabled-ink);
     cursor: default;
 }
 
 .bracket-team-row.is-winner .winner-choice {
-    background: #e8e0fb;
+    background: var(--accent-soft);
     color: var(--accent-dark);
 }
 
 .bye-label {
-    color: #938d9b;
+    color: var(--subtle);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.06em;

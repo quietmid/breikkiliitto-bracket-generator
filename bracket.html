@@ -8,6 +8,16 @@
 </head>
 <body>
     <main class="container bracket-container">
+        <div class="theme-control">
+            <label for="themeSelector">Color theme</label>
+            <select id="themeSelector">
+                <option value="light">Light mode</option>
+                <option value="dark">Dark mode</option>
+                <option value="blue-mint">Blue and mint</option>
+                <option value="red-black">Red and black</option>
+                <option value="blue-shades">Blue shades and white</option>
+            </select>
+        </div>
         <h1>Bracket categories</h1>
         <p id="result" class="page-description"></p>
         <div id="categoryTabs" class="tabs" role="tablist" aria-label="Categories"></div>
@@ -16,6 +26,7 @@
         <a class="back-link" href="./index.html">Change number of categories</a>
     </main>
 
+    <script type="module" src="./theme.js"></script>
     <script type="module" src="./bracketUI.js"></script>
 </body>
 </html>
