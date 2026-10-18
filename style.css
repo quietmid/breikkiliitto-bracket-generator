@@ -626,10 +626,6 @@ button:disabled {
     display: none;
 }
 
-.third-place-round .round-heading {
-    margin-bottom: 10px;
-}
-
 .third-place-team-name {
     min-width: 0;
     overflow: hidden;
@@ -659,24 +655,6 @@ button:disabled {
     grid-template-rows: repeat(var(--side-row-count), minmax(0, 1fr));
     align-items: center;
     min-height: 0;
-}
-
-.round-heading {
-    width: fit-content;
-    margin: 0 0 20px;
-    margin-right: auto;
-    margin-left: auto;
-    padding: 6px 12px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--surface);
-    color: var(--ink);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-align: center;
-    text-transform: uppercase;
 }
 
 .match-card {

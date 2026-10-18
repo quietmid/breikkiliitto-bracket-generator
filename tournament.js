@@ -17,7 +17,6 @@ import {
     createWinnerSides,
     getLoser,
     getPlayer,
-    getRoundName,
     selectWinner
 } from './tournamentLogic.js';
 
@@ -217,16 +216,13 @@ if (!isValidCategoryCount(storedCategoryCount)) {
 
             function createRound(roundIndex, firstMatchIndex, matchCount, target) {
                 const roundElement = document.createElement('section');
-                const roundHeading = document.createElement('h2');
                 const matchesElement = document.createElement('div');
 
                 roundElement.className = 'bracket-round';
                 roundElement.dataset.round = String(roundIndex);
-                roundHeading.className = 'round-heading';
-                roundHeading.textContent = getRoundName(roundIndex, roundCount);
                 matchesElement.className = 'round-matches';
                 matchesElement.style.setProperty('--match-span', String(2 ** roundIndex));
-                roundElement.append(roundHeading, matchesElement);
+                roundElement.append(matchesElement);
 
                 for (let matchIndex = firstMatchIndex; matchIndex < firstMatchIndex + matchCount; matchIndex += 1) {
                     const matchElement = document.createElement('article');
