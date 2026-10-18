@@ -48,6 +48,7 @@ export function getNextTabIndex(currentIndex, key, tabCount) {
 
 export const categoryNameStorageKey = (number) => `categoryName-${number}`;
 export const categoryTeamCountStorageKey = (number) => `categoryTeamCount-${number}`;
+export const categoryTeamModeStorageKey = (number) => `categoryTeamMode-${number}`;
 export const categoryTeamsStorageKey = (number) => `categoryTeams-${number}`;
 export const categoryWinnersStorageKey = (number) => `categoryWinners-${number}`;
 export const categoryThirdPlaceStorageKey = (number) => `categoryThirdPlace-${number}`;

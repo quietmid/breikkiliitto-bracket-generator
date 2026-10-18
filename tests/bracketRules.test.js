@@ -5,6 +5,7 @@ import {
     CATEGORY_COUNT_STORAGE_KEY,
     categoryNameStorageKey,
     categoryTeamCountStorageKey,
+    categoryTeamModeStorageKey,
     categoryTeamsStorageKey,
     categoryThirdPlaceStorageKey,
     categoryThirdPlaceWinnerStorageKey,
@@ -77,6 +78,7 @@ test('defines stable shared session storage keys', () => {
     assert.equal(BACKGROUND_PHOTO_STORAGE_KEY, 'tournamentBackgroundPhoto');
     assert.equal(categoryNameStorageKey(2), 'categoryName-2');
     assert.equal(categoryTeamCountStorageKey(2), 'categoryTeamCount-2');
+    assert.equal(categoryTeamModeStorageKey(2), 'categoryTeamMode-2');
     assert.equal(categoryTeamsStorageKey(2), 'categoryTeams-2');
     assert.equal(categoryWinnersStorageKey(2), 'categoryWinners-2');
     assert.equal(categoryThirdPlaceStorageKey(2), 'categoryThirdPlace-2');

@@ -63,6 +63,68 @@ test('omits all round headings for a bracket with top-16 and quarter-final round
     await expect(page.locator('.round-heading')).toHaveCount(0);
 });
 
+test('generates a ranked bracket from names entered in seed order', async ({ page }) => {
+    await page.goto('/index.html');
+    await page.locator('#categories').fill('1');
+    await page.locator('#startButton').click();
+    await page.locator('#category-team-count-1').fill('16');
+    await page.locator('#category-team-mode-1').selectOption('ranked');
+
+    const rosterInputs = page.locator('#category-team-roster-1 input');
+    await expect(rosterInputs).toHaveCount(16);
+    await expect(page.locator('#generateBracketButton')).toBeDisabled();
+    for (let index = 0; index < 16; index += 1) {
+        await rosterInputs.nth(index).fill(`Seed ${index + 1}`);
+    }
+
+    await page.locator('#generateBracketButton').click();
+    await expect(page).toHaveURL(/tournament\.html$/);
+
+    const matchTeams = async (matchIndex) => page
+        .locator(`.bracket-round[data-round="0"] .match-card[data-match="${matchIndex}"] .team-name-input`)
+        .evaluateAll((inputs) => inputs.map((input) => input.value));
+    expect(await matchTeams(0)).toEqual(['Seed 1', 'Seed 16']);
+    expect(await matchTeams(1)).toEqual(['Seed 8', 'Seed 9']);
+    expect(await matchTeams(2)).toEqual(['Seed 5', 'Seed 12']);
+
+    await page.reload();
+    expect(await matchTeams(0)).toEqual(['Seed 1', 'Seed 16']);
+});
+
+test('randomly pairs pre-entered teams and restores the same draw after reload', async ({ page }) => {
+    await page.addInitScript(() => {
+        Math.random = () => 0;
+    });
+    await page.goto('/index.html');
+    await page.locator('#categories').fill('1');
+    await page.locator('#startButton').click();
+    await page.locator('#category-team-count-1').fill('8');
+    await page.locator('#category-team-mode-1').selectOption('random');
+
+    const rosterInputs = page.locator('#category-team-roster-1 input');
+    for (let index = 0; index < 8; index += 1) {
+        await rosterInputs.nth(index).fill(`Team ${index + 1}`);
+    }
+    await page.locator('#generateBracketButton').click();
+    await expect(page).toHaveURL(/tournament\.html$/);
+
+    const firstRoundInputs = page.locator(
+        '.bracket-round[data-round="0"] .match-card .team-name-input'
+    );
+    await expect(firstRoundInputs).toHaveCount(8);
+    await expect(firstRoundInputs.nth(0)).toHaveValue('Team 2');
+    await expect(firstRoundInputs.nth(1)).toHaveValue('Team 3');
+    const drawBeforeReload = await firstRoundInputs.evaluateAll((inputs) => (
+        inputs.map((input) => input.value)
+    ));
+
+    await page.reload();
+    await expect(firstRoundInputs).toHaveCount(8);
+    await expect.poll(() => firstRoundInputs.evaluateAll((inputs) => (
+        inputs.map((input) => input.value)
+    ))).toEqual(drawBeforeReload);
+});
+
 test('creates and completes a one-category, eight-team tournament without a photo', async ({ page }) => {
     await page.goto('/index.html');
     await expect(page.locator('#backgroundPhotoStatus')).toBeEmpty();

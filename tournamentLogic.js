@@ -1,4 +1,30 @@
-export function createBracketSlots(size, teamCount) {
+function getSeedPositions(size) {
+    let seedPositions = [1];
+
+    while (seedPositions.length < size) {
+        const nextSize = seedPositions.length * 2;
+        seedPositions = seedPositions.flatMap((seed) => [seed, nextSize + 1 - seed]);
+    }
+
+    let matchOrder = [0];
+    while (matchOrder.length < size / 2) {
+        const matchCount = matchOrder.length;
+        matchOrder = [
+            ...matchOrder,
+            ...Array.from({ length: matchCount }, (_, index) => matchCount * 2 - 1 - index)
+        ];
+    }
+
+    return matchOrder.flatMap((matchIndex) => seedPositions.slice(matchIndex * 2, matchIndex * 2 + 2));
+}
+
+export function createBracketSlots(size, teamCount, mode = 'manual') {
+    if (mode === 'ranked') {
+        return getSeedPositions(size).map((seed) => (
+            seed <= teamCount ? seed - 1 : null
+        ));
+    }
+
     const slots = Array(size).fill(null);
     const matchCount = size / 2;
     const byeCount = size - teamCount;
@@ -24,6 +50,20 @@ export function createBracketSlots(size, teamCount) {
     }
 
     return slots;
+}
+
+export function shuffleTeams(teams, random = Math.random) {
+    const shuffledTeams = [...teams];
+
+    for (let index = shuffledTeams.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(random() * (index + 1));
+        [shuffledTeams[index], shuffledTeams[swapIndex]] = [
+            shuffledTeams[swapIndex],
+            shuffledTeams[index]
+        ];
+    }
+
+    return shuffledTeams;
 }
 
 export function getPlayer(state, roundIndex, matchIndex, sideIndex) {

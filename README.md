@@ -7,7 +7,7 @@ A bracket generator for Dance competition
 https://quietmid.github.io/breikkiliitto-bracket-generator/
 
 # How to use
-Enter a category count from 1 to 6 and select **Start**. There is also an option to upload image below, use an image smaller than 24 MB from your device. You can come back to change it but will need to re-enter all the entries. Give the bracket name and select how many contestants are in the bracket. Enter names in the opening round and select winners to advance them; byes advance automatically. Optionally enable a third-place match below the final to match the semi-final losers. Category names, team names, and selected winners are saved for the current browser session.
+Enter a category count from 1 to 6 and select **Start**. There is also an option to upload image below, use an image smaller than 24 MB from your device. You can come back to change it but will need to re-enter all the entries. For each category, enter the number of teams and choose **Ranked**, **Random**, or **Manual**. Ranked and Random ask for all team names before generating: Ranked uses the entered order as seeds (first name is seed 1), while Random shuffles the teams once to create the draw. In Manual mode, enter names in the opening round after the bracket is generated. Select winners to advance them; byes advance automatically. Optionally enable a third-place match below the final to match the semi-final losers. Category names, team names, draw, and selected winners are saved for the current browser session.
 
 
 More feature to come through, just maybe :P 

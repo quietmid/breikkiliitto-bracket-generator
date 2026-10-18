@@ -1,6 +1,9 @@
 import {
     categoryNameStorageKey,
     categoryTeamCountStorageKey,
+    categoryTeamModeStorageKey,
+    categoryTeamsStorageKey,
+    categoryThirdPlaceWinnerStorageKey,
     categoryWinnersStorageKey,
     CATEGORY_COUNT_STORAGE_KEY,
     getCategoryLabel,
@@ -11,6 +14,7 @@ import {
     MAX_TEAM_COUNT,
     MIN_TEAM_COUNT
 } from './bracketRules.js';
+import { shuffleTeams } from './tournamentLogic.js';
 
 const categoryCount = sessionStorage.getItem(CATEGORY_COUNT_STORAGE_KEY);
 
@@ -22,13 +26,18 @@ if (!isValidCategoryCount(categoryCount)) {
     const result = document.getElementById('result');
     const generateButton = document.getElementById('generateBracketButton');
     const tabs = [];
-    const teamCountInputs = [];
+    const categories = [];
     const count = Number(categoryCount);
 
     result.textContent = `Name each category and enter its number of teams (${MIN_TEAM_COUNT}–${MAX_TEAM_COUNT}).`;
 
     function updateGenerateButton() {
-        generateButton.disabled = !teamCountInputs.every((input) => isValidTeamCount(input.value));
+        generateButton.disabled = !categories.every((category) => (
+            isValidTeamCount(category.countInput.value) &&
+            (category.modeSelect.value === 'manual' ||
+                (category.rosterInputs.length === Number(category.countInput.value) &&
+                    category.rosterInputs.every((input) => input.value.trim() !== '')))
+        ));
     }
 
     function activateTab(activeIndex) {
@@ -40,23 +49,23 @@ if (!isValidCategoryCount(categoryCount)) {
         });
     }
 
-    function createCategory(number, index) {
+    function clearCategoryOutcomes(number) {
+        sessionStorage.removeItem(categoryWinnersStorageKey(number));
+        sessionStorage.removeItem(categoryThirdPlaceWinnerStorageKey(number));
+    }
+
+    function createCategoryTab(category) {
         const tab = document.createElement('button');
-        const panel = document.createElement('section');
-        const nameLabel = document.createElement('label');
-        const nameInput = document.createElement('input');
-        const countLabel = document.createElement('label');
-        const countInput = document.createElement('input');
-        const storedName = sessionStorage.getItem(categoryNameStorageKey(number)) || '';
+        const storedName = sessionStorage.getItem(categoryNameStorageKey(category.number)) || '';
 
         tab.type = 'button';
-        tab.id = `category-tab-${number}`;
+        tab.id = `category-tab-${category.number}`;
         tab.setAttribute('role', 'tab');
-        tab.setAttribute('aria-controls', `category-panel-${number}`);
-        tab.textContent = getCategoryLabel(storedName, number);
-        tab.addEventListener('click', () => activateTab(index));
+        tab.setAttribute('aria-controls', `category-panel-${category.number}`);
+        tab.textContent = getCategoryLabel(storedName, category.number);
+        tab.addEventListener('click', () => activateTab(category.index));
         tab.addEventListener('keydown', (event) => {
-            const nextIndex = getNextTabIndex(index, event.key, count);
+            const nextIndex = getNextTabIndex(category.index, event.key, count);
             if (nextIndex === null) {
                 return;
             }
@@ -66,48 +75,190 @@ if (!isValidCategoryCount(categoryCount)) {
             tabs[nextIndex].focus();
         });
 
-        panel.id = `category-panel-${number}`;
-        panel.className = 'tab-panel';
-        panel.setAttribute('role', 'tabpanel');
-        panel.setAttribute('aria-labelledby', tab.id);
-        panel.hidden = index !== 0;
+        return tab;
+    }
 
-        nameLabel.htmlFor = `category-name-${number}`;
-        nameLabel.textContent = `Category ${number} name`;
+    function createCategoryNameFields(category) {
+        const nameLabel = document.createElement('label');
+        const nameInput = document.createElement('input');
+        const storedName = sessionStorage.getItem(categoryNameStorageKey(category.number)) || '';
 
-        nameInput.id = `category-name-${number}`;
+        nameLabel.htmlFor = `category-name-${category.number}`;
+        nameLabel.textContent = `Category ${category.number} name`;
+
+        nameInput.id = nameLabel.htmlFor;
         nameInput.type = 'text';
         nameInput.maxLength = MAX_CATEGORY_NAME_LENGTH;
-        nameInput.placeholder = `Enter category ${number} name`;
+        nameInput.placeholder = `Enter category ${category.number} name`;
         nameInput.value = storedName;
         nameInput.autocomplete = 'off';
         nameInput.addEventListener('input', () => {
-            tab.textContent = getCategoryLabel(nameInput.value, number);
-            sessionStorage.setItem(categoryNameStorageKey(number), nameInput.value);
+            category.tab.textContent = getCategoryLabel(nameInput.value, category.number);
+            sessionStorage.setItem(categoryNameStorageKey(category.number), nameInput.value);
         });
 
-        countLabel.htmlFor = `category-team-count-${number}`;
+        return [nameLabel, nameInput];
+    }
+
+    function createTeamCountFields(category) {
+        const countLabel = document.createElement('label');
+        const countInput = document.createElement('input');
+
+        countLabel.htmlFor = `category-team-count-${category.number}`;
         countLabel.className = 'team-count-label';
         countLabel.textContent = `Number of teams (${MIN_TEAM_COUNT}–${MAX_TEAM_COUNT})`;
 
-        countInput.id = `category-team-count-${number}`;
+        countInput.id = countLabel.htmlFor;
         countInput.type = 'number';
         countInput.min = String(MIN_TEAM_COUNT);
         countInput.max = String(MAX_TEAM_COUNT);
         countInput.step = '1';
         countInput.placeholder = 'e.g. 8';
-        countInput.value = sessionStorage.getItem(categoryTeamCountStorageKey(number)) || '';
+        countInput.value = sessionStorage.getItem(categoryTeamCountStorageKey(category.number)) || '';
         countInput.addEventListener('input', () => {
-            sessionStorage.setItem(categoryTeamCountStorageKey(number), countInput.value);
-            sessionStorage.removeItem(categoryWinnersStorageKey(number));
+            sessionStorage.setItem(categoryTeamCountStorageKey(category.number), countInput.value);
+            clearCategoryOutcomes(category.number);
+            updateCategoryRoster(category);
             updateGenerateButton();
         });
 
-        panel.append(nameLabel, nameInput, countLabel, countInput);
-        tabList.append(tab);
-        panels.append(panel);
-        tabs.push(tab);
-        teamCountInputs.push(countInput);
+        category.countInput = countInput;
+        return [countLabel, countInput];
+    }
+
+    function createTeamModeFields(category) {
+        const modeLabel = document.createElement('label');
+        const modeSelect = document.createElement('select');
+
+        modeLabel.htmlFor = `category-team-mode-${category.number}`;
+        modeLabel.className = 'team-mode-label';
+        modeLabel.textContent = 'Team entry mode';
+
+        modeSelect.id = modeLabel.htmlFor;
+        modeSelect.className = 'team-mode-select';
+        [
+            ['ranked', 'Ranked'],
+            ['random', 'Random'],
+            ['manual', 'Manual']
+        ].forEach(([value, label]) => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            modeSelect.append(option);
+        });
+
+        const storedMode = sessionStorage.getItem(categoryTeamModeStorageKey(category.number));
+        modeSelect.value = ['ranked', 'random', 'manual'].includes(storedMode)
+            ? storedMode
+            : 'manual';
+        modeSelect.addEventListener('change', () => {
+            sessionStorage.setItem(categoryTeamModeStorageKey(category.number), modeSelect.value);
+            clearCategoryOutcomes(category.number);
+            updateCategoryRoster(category);
+            updateGenerateButton();
+        });
+
+        category.modeSelect = modeSelect;
+        return [modeLabel, modeSelect];
+    }
+
+    function createTeamRoster(category) {
+        const rosterContainer = document.createElement('div');
+        rosterContainer.className = 'team-roster';
+        rosterContainer.id = `category-team-roster-${category.number}`;
+        category.rosterContainer = rosterContainer;
+        category.rosterInputs = [];
+        return rosterContainer;
+    }
+
+    function createRosterTeamFields(category, teamIndex, storedTeams) {
+        const teamLabel = document.createElement('label');
+        const teamInput = document.createElement('input');
+        const teamNumber = teamIndex + 1;
+        const isRanked = category.modeSelect.value === 'ranked';
+
+        teamLabel.htmlFor = `category-team-name-${category.number}-${teamNumber}`;
+        teamLabel.textContent = isRanked ? `Seed ${teamNumber}` : `Team ${teamNumber}`;
+
+        teamInput.id = teamLabel.htmlFor;
+        teamInput.type = 'text';
+        teamInput.maxLength = 60;
+        teamInput.autocomplete = 'off';
+        teamInput.value = storedTeams[teamIndex] || '';
+        teamInput.addEventListener('input', () => {
+            clearCategoryOutcomes(category.number);
+            sessionStorage.setItem(
+                categoryTeamsStorageKey(category.number),
+                JSON.stringify(category.rosterInputs.map((input) => input.value))
+            );
+            updateGenerateButton();
+        });
+
+        return [teamLabel, teamInput];
+    }
+
+    function updateCategoryRoster(category) {
+        const teamCount = isValidTeamCount(category.countInput.value)
+            ? Number(category.countInput.value)
+            : 0;
+        const mode = category.modeSelect.value;
+        const rosterContainer = category.rosterContainer;
+
+        rosterContainer.replaceChildren();
+        category.rosterInputs = [];
+        rosterContainer.hidden = mode === 'manual' || teamCount === 0;
+
+        if (rosterContainer.hidden) {
+            return;
+        }
+
+        const legend = document.createElement('h3');
+        legend.className = 'team-roster-heading';
+        legend.textContent = mode === 'ranked'
+            ? 'Team names in seed order (first name is seed 1)'
+            : 'Team names to pair randomly';
+        rosterContainer.append(legend);
+
+        const storedTeams = JSON.parse(
+            sessionStorage.getItem(categoryTeamsStorageKey(category.number)) || '[]'
+        );
+
+        for (let teamIndex = 0; teamIndex < teamCount; teamIndex += 1) {
+            const fields = createRosterTeamFields(category, teamIndex, storedTeams);
+            rosterContainer.append(...fields);
+            category.rosterInputs.push(fields[1]);
+        }
+    }
+
+    function createCategoryPanel(category) {
+        const panel = document.createElement('section');
+
+        panel.id = `category-panel-${category.number}`;
+        panel.className = 'tab-panel';
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', category.tab.id);
+        panel.hidden = category.index !== 0;
+
+        const fields = [
+            ...createCategoryNameFields(category),
+            ...createTeamCountFields(category),
+            ...createTeamModeFields(category),
+            createTeamRoster(category)
+        ];
+        panel.append(...fields);
+        return panel;
+    }
+
+    function createCategory(number, index) {
+        const category = { number, index, rosterInputs: [] };
+        category.tab = createCategoryTab(category);
+        category.panel = createCategoryPanel(category);
+
+        tabList.append(category.tab);
+        panels.append(category.panel);
+        tabs.push(category.tab);
+        categories.push(category);
+        updateCategoryRoster(category);
     }
 
     for (let index = 0; index < count; index += 1) {
@@ -120,6 +271,17 @@ if (!isValidCategoryCount(categoryCount)) {
     generateButton.addEventListener('click', () => {
         updateGenerateButton();
         if (!generateButton.disabled) {
+            categories.forEach((category) => {
+                if (category.modeSelect.value === 'manual') {
+                    return;
+                }
+
+                const names = category.rosterInputs.map((input) => input.value.trim());
+                sessionStorage.setItem(
+                    categoryTeamsStorageKey(category.number),
+                    JSON.stringify(category.modeSelect.value === 'random' ? shuffleTeams(names) : names)
+                );
+            });
             window.location.href = './tournament.html';
         }
     });

@@ -3,6 +3,7 @@ import {
     CATEGORY_COUNT_STORAGE_KEY,
     categoryNameStorageKey,
     categoryTeamCountStorageKey,
+    categoryTeamModeStorageKey,
     categoryTeamsStorageKey,
     categoryThirdPlaceStorageKey,
     categoryThirdPlaceWinnerStorageKey,
@@ -31,7 +32,8 @@ if (!isValidCategoryCount(storedCategoryCount)) {
         return {
             number,
             name: getCategoryLabel(sessionStorage.getItem(categoryNameStorageKey(number)) || '', number),
-            teamCount: Number(sessionStorage.getItem(categoryTeamCountStorageKey(number)))
+            teamCount: Number(sessionStorage.getItem(categoryTeamCountStorageKey(number))),
+            mode: sessionStorage.getItem(categoryTeamModeStorageKey(number)) || 'manual'
         };
     });
 
@@ -195,7 +197,7 @@ if (!isValidCategoryCount(storedCategoryCount)) {
                 ? Number(savedThirdPlaceWinner)
                 : null;
 
-            slotTeams = createBracketSlots(size, category.teamCount);
+            slotTeams = createBracketSlots(size, category.teamCount, category.mode);
 
             const savedWinners = JSON.parse(
                 sessionStorage.getItem(categoryWinnersStorageKey(category.number)) || '[]'

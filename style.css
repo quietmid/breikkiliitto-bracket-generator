@@ -333,6 +333,51 @@ button:disabled {
     margin-top: 24px;
 }
 
+.team-mode-label {
+    margin-top: 24px;
+}
+
+.team-mode-select {
+    width: 100%;
+    max-width: 440px;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--field);
+    color: var(--ink);
+    font: inherit;
+    font-size: 1rem;
+}
+
+.team-mode-select:focus-visible {
+    border-color: var(--accent);
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+
+.team-roster {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 0 16px;
+    margin-top: 20px;
+}
+
+.team-roster[hidden] {
+    display: none;
+}
+
+.team-roster-heading {
+    grid-column: 1 / -1;
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.team-roster label {
+    margin-bottom: 8px;
+}
+
 #generateBracketButton {
     margin-top: 20px;
 }
