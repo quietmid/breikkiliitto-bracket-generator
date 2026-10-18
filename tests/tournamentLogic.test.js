@@ -5,7 +5,8 @@ import {
     createWinnerSides,
     getLoser,
     getPlayer,
-    selectWinner
+    selectWinner,
+    shuffleTeams
 } from '../tournamentLogic.js';
 
 test('createBracketSlots places byes at the bracket ends', () => {
@@ -15,6 +16,28 @@ test('createBracketSlots places byes at the bracket ends', () => {
 
 test('createBracketSlots pairs all teams when there are no byes', () => {
     assert.deepEqual(createBracketSlots(4, 4), [0, 1, 2, 3]);
+});
+
+test('createBracketSlots places ranked teams in standard 16-team seed positions', () => {
+    assert.deepEqual(
+        createBracketSlots(16, 16, 'ranked'),
+        [0, 15, 7, 8, 4, 11, 3, 12, 5, 10, 2, 13, 6, 9, 1, 14]
+    );
+});
+
+test('createBracketSlots gives byes to the highest-ranked teams', () => {
+    assert.deepEqual(
+        createBracketSlots(16, 12, 'ranked'),
+        [0, null, 7, 8, 4, 11, 3, null, 5, 10, 2, null, 6, 9, 1, null]
+    );
+});
+
+test('shuffleTeams shuffles a copy using the supplied random source', () => {
+    const teams = ['A', 'B', 'C', 'D'];
+    const shuffledTeams = shuffleTeams(teams, () => 0);
+
+    assert.deepEqual(shuffledTeams, ['B', 'C', 'D', 'A']);
+    assert.deepEqual(teams, ['A', 'B', 'C', 'D']);
 });
 
 test('createWinnerSides restores picks and automatically advances byes', () => {
