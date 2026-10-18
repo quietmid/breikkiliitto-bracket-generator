@@ -5,7 +5,6 @@ import {
     createWinnerSides,
     getLoser,
     getPlayer,
-    getRoundName,
     selectWinner
 } from '../tournamentLogic.js';
 
@@ -57,22 +56,6 @@ test('getLoser returns the non-winning player only after a winner is selected', 
 
     assert.deepEqual(getLoser(state, 0, 0), { teamIndex: 1, name: 'B' });
     assert.equal(getLoser(state, 1, 0), null);
-});
-
-test('getRoundName labels rounds by remaining bracket size', () => {
-    assert.equal(getRoundName(0, 1), 'Final');
-    assert.equal(getRoundName(0, 2), 'Semi-finals');
-    assert.equal(getRoundName(1, 2), 'Final');
-    assert.equal(getRoundName(0, 3), 'Quarter-finals');
-    assert.equal(getRoundName(0, 4), 'Top 16');
-    assert.equal(getRoundName(0, 5), 'Top 32');
-    assert.equal(getRoundName(1, 5), 'Top 16');
-    assert.equal(getRoundName(0, 6), 'Top 64');
-    assert.equal(getRoundName(1, 6), 'Top 32');
-    assert.equal(getRoundName(2, 6), 'Top 16');
-    assert.equal(getRoundName(3, 6), 'Quarter-finals');
-    assert.equal(getRoundName(4, 6), 'Semi-finals');
-    assert.equal(getRoundName(5, 6), 'Final');
 });
 
 test('selectWinner clears later outcomes on the affected bracket path', () => {

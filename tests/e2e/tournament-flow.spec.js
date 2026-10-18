@@ -20,11 +20,11 @@ test('changes and remembers the selected color theme across screens', async ({ p
     await expect(page).toHaveURL(/tournament\.html$/);
     await expect(page.locator('#themeSelector')).toHaveValue('red-black');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'red-black');
-    await expect(page.locator('.round-heading').first()).toHaveCSS('background-color', 'rgb(36, 36, 36)');
-    await expect(page.locator('.round-heading').first()).toHaveCSS('border-radius', '999px');
+    await expect(page.locator('.round-heading')).toHaveCount(0);
     await expect(page.locator('#finalRound')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 48)');
     await page.locator('#thirdPlaceToggle').check();
     await expect(page.locator('#thirdPlaceRound')).toBeVisible();
+    await expect(page.locator('#thirdPlaceRound .round-heading')).toHaveCount(0);
     const thirdPlaceBounds = await page.locator('#thirdPlaceRound').boundingBox();
     const toggleBounds = await page.locator('.third-place-toggle').boundingBox();
     expect(thirdPlaceBounds).not.toBeNull();
@@ -41,10 +41,26 @@ test('changes and remembers the selected color theme across screens', async ({ p
     await page.locator('#themeSelector').selectOption('blue-mint');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'blue-mint');
     await expect(page.locator('html')).toHaveCSS('--page', '#effaf7');
-    await expect(page.locator('.round-heading').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(page.locator('.round-heading')).toHaveCount(0);
     await page.reload();
     await expect(page.locator('#themeSelector')).toHaveValue('blue-mint');
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'blue-mint');
+});
+
+test('omits all round headings for a bracket with top-16 and quarter-final rounds', async ({ page }) => {
+    await page.goto('/index.html');
+    await page.locator('#categories').fill('1');
+    await page.locator('#startButton').click();
+    await page.locator('#category-team-count-1').fill('32');
+    await page.locator('#generateBracketButton').click();
+
+    await expect(page).toHaveURL(/tournament\.html$/);
+    await expect(page.locator('.bracket-round')).toHaveCount(9);
+    await expect(page.locator('.round-heading')).toHaveCount(0);
+
+    await page.locator('#thirdPlaceToggle').check();
+    await expect(page.locator('#thirdPlaceRound')).toBeVisible();
+    await expect(page.locator('.round-heading')).toHaveCount(0);
 });
 
 test('creates and completes a one-category, eight-team tournament without a photo', async ({ page }) => {

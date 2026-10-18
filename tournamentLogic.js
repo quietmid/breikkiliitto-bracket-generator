@@ -48,20 +48,6 @@ export function getLoser(state, roundIndex, matchIndex) {
         : getPlayer(state, roundIndex, matchIndex, 1 - selectedSide);
 }
 
-export function getRoundName(roundIndex, roundCount) {
-    const teamsRemaining = 2 ** (roundCount - roundIndex);
-    if (teamsRemaining === 2) {
-        return 'Final';
-    }
-    if (teamsRemaining === 4) {
-        return 'Semi-finals';
-    }
-    if (teamsRemaining === 8) {
-        return 'Quarter-finals';
-    }
-    return `Top ${teamsRemaining}`;
-}
-
 export function createWinnerSides(size, slotTeams, savedWinners) {
     const roundCount = Math.log2(size);
     return Array.from({ length: roundCount }, (_, roundIndex) => {
